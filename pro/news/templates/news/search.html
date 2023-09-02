@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>昨日偷条</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-/mhDoLbDldZc3qpsJHpLogda//BVZbgYuw6kof4u2FrCedxOtgRZDTHgHUhOCVim"
+        crossorigin="anonymous"></script>
+    <!-- 引入 Bootstrap 核心 JavaScript 文件（必须放在 body 最底部） -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <nav class="navbar navbar-expand-lg "
+        style="background-color: rgba(111, 89, 156, 0.85); position: fixed; width: 100%; z-index: 99;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="http://127.0.0.1:8000/news/home" style="color: #d390c8;">昨日偷条</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">置顶</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="http://127.0.0.1:8000/news/list/1">列表</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://127.0.0.1:8000/news/classify">分类</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://127.0.0.1:8000/news/search">搜索</a>
+                    </li>
+
+                </ul>
+
+                <!-- 引入 Font Awesome 图标库 -->
+                <link rel="stylesheet"
+                    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+                <style>
+                    .search-form {
+                        position: relative;
+                    }
+
+                    .search-options {
+                        position: absolute;
+                        top: calc(100% + 10px);
+                        /* 将搜索选项位置调整到搜索框下方 */
+                        left: 0;
+                        background-color: #ffffff;
+                        border: 1px solid #cccccc;
+                        padding: 10px;
+                        display: none;
+                        z-index: 10;
+                    }
+
+                    .search-option {
+                        margin-bottom: 5px;
+
+                    }
+
+                    .search-icon {
+                        position: absolute;
+                        top: 50%;
+                        right: 10px;
+                        transform: translateY(-50%);
+                        cursor: pointer;
+                        left: 0;
+                    }
+
+                    .search-form {
+                        position: relative;
+                        /* 将搜索表单设置为相对定位 */
+                        display: flex;
+                        justify-content: flex-end;
+                        /* 将容器内的元素右对齐 */
+                    }
+
+                    .search-button-container {
+                        margin-left: 5px;
+                        /* 设置搜索按钮左侧的间隔 */
+                    }
+                </style>
+
+
+
+                <script>
+                    document.querySelector('.search-icon').addEventListener('click', function () {
+                        var searchOptions = document.querySelector('.search-options');
+                        searchOptions.style.display = searchOptions.style.display === 'none' ? 'block' : 'none';
+                    });
+
+                    document.addEventListener('click', function (event) {
+                        var searchForm = document.querySelector('.search-form');
+                        if (!searchForm.contains(event.target)) {
+                            var searchOptions = document.querySelector('.search-options');
+                            searchOptions.style.display = 'none';
+                        }
+                    });
+                </script>
+
+
+            </div>
+        </div>
+    </nav>
+
+    <div style="border: 5px; padding: 40px;">
+        <div class="row row-cols-1 row-cols-md-4 g-5" id="component-container">
+            <!-- Generated components will be inserted here -->
+        </div>
+    </div>
+
+
+    <form method="POST" action="{% url 'show_search_result' page=1 %}">
+        {% csrf_token %}
+        <div class="input-group mb-3" style="margin-right: -5%; margin-left:5%; width: 90%;">
+            <div class="input-group-text">
+                <input id="checkbox1" class="form-check-input mt-0" type="checkbox" value=""
+                    aria-label="Checkbox for following text input">
+                <span style="margin-left: 0.5rem;">1月</span>
+            </div>
+            <div class="input-group-text">
+                <input id="checkbox2" class="form-check-input mt-0" type="checkbox" value=""
+                    aria-label="Checkbox for following text input">
+                <span style="margin-left: 0.5rem;">2月</span>
+            </div>
+            <div class="input-group-text">
+                <input id="checkbox3" class="form-check-input mt-0" type="checkbox" value=""
+                    aria-label="Checkbox for following text input">
+                <span style="margin-left: 0.5rem;">3月</span>
+            </div>
+            <div class="input-group-text">
+                <input id="checkbox4" class="form-check-input mt-0" type="checkbox" value=""
+                    aria-label="Checkbox for following text input">
+                <span style="margin-left: 0.5rem;">4月</span>
+            </div>
+            <div class="input-group-text">
+                <input id="checkbox5" class="form-check-input mt-0" type="checkbox" value=""
+                    aria-label="Checkbox for following text input">
+                <span style="margin-left: 0.5rem;">5月</span>
+            </div>
+            <div class="input-group-text">
+                <input id="checkbox6" class="form-check-input mt-0" type="checkbox" value=""
+                    aria-label="Checkbox for following text input">
+                <span style="margin-left: 0.5rem;">6月</span>
+            </div>
+            <div class="input-group-text">
+                <input id="checkbox7" class="form-check-input mt-0" type="checkbox" value=""
+                    aria-label="Checkbox for following text input">
+                <span style="margin-left: 0.5rem;">7月</span>
+            </div>
+            <div class="input-group-text">
+                <input id="checkbox8" class="form-check-input mt-0" type="checkbox" value=""
+                    aria-label="Checkbox for following text input">
+                <span style="margin-left: 0.5rem;">8月</span>
+            </div>
+            <!-- 其他月份复选框... -->
+            <div class="input-group-text">
+                <input id="radio1" class="form-check-input mt-0" type="radio" name="radioGroup" value="option1" checked
+                    aria-label="Radio button for following text input">
+                <span style="margin-left: 0.5rem;">按时间排序</span>
+            </div>
+            <div class="input-group-text">
+                <input id="radio2" class="form-check-input mt-0" type="radio" name="radioGroup" value="option2"
+                    aria-label="Radio button for following text input">
+                <span style="margin-left: 0.5rem;">按热度排序</span>
+            </div>
+            <input id="searchInput" type="text" class="form-control" aria-label="Text input with checkbox"
+                placeholder="请输入搜索内容">
+            <input type="hidden" id="searchRequest" name="searchRequest">
+            <button class="btn btn-success" onclick="handleSearch()">搜索</button>
+        </div>
+
+        <script>
+            var selectedMonths = [];
+            var selectedSortOption = "";
+
+            function handleCheckboxChange() {
+                selectedMonths = [];
+                var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
+                for (var i = 0; i < checkboxes.length; i++) {
+                    selectedMonths.push(checkboxes[i].id);
+                }
+            }
+
+            function handleRadioChange() {
+                selectedSortOption = "";
+                var radios = document.getElementsByName("radioGroup");
+                for (var i = 0; i < radios.length; i++) {
+                    if (radios[i].checked) {
+                        selectedSortOption = radios[i].value;
+                        break;
+                    }
+                }
+            }
+
+            function handleSearch() {
+                var searchInputValue = document.getElementById("searchInput").value;
+
+                // 构造搜索请求，将选中的月份和排序选项作为参数发送给后端进行处理
+                var searchRequest = {
+                    query: searchInputValue,
+                    months: selectedMonths,
+                    sortOption: selectedSortOption,
+                };
+
+                // 将搜索请求数据填充到隐藏的表单字段中
+                document.getElementById("searchRequest").value = JSON.stringify(searchRequest);
+
+                // 提交表单
+                document.getElementById("searchForm").submit();
+                // 发送搜索请求给后端...
+            }
+
+            // 监听复选框和单选框的变化
+            var checkboxes = document.querySelectorAll('input[type=checkbox]');
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].addEventListener('change', handleCheckboxChange);
+            }
+
+            var radios = document.getElementsByName("radioGroup");
+            for (var i = 0; i < radios.length; i++) {
+                radios[i].addEventListener('change', handleRadioChange);
+            }
+        </script>
+    </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <br>
+    <br>
+    <br>
+    <br>
+</body>
+
+</html>

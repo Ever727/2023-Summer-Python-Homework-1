@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>昨日偷条</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-/mhDoLbDldZc3qpsJHpLogda//BVZbgYuw6kof4u2FrCedxOtgRZDTHgHUhOCVim"
+        crossorigin="anonymous"></script>
+    <!-- 引入 Bootstrap 核心 JavaScript 文件（必须放在 body 最底部） -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <nav class="navbar navbar-expand-lg "
+        style="background-color: rgba(111, 89, 156, 0.85); position: fixed; width: 100%; z-index: 99;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="http://127.0.0.1:8000/news/home" style="color: #d390c8;">昨日偷条</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">置顶</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="http://127.0.0.1:8000/news/list/1">列表</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://127.0.0.1:8000/news/classify">分类</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://127.0.0.1:8000/news/search">搜索</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div style="border: 5px; padding: 40px;">
+        <div class="row row-cols-1 row-cols-md-4 g-5" id="component-container">
+            <!-- Generated components will be inserted here -->
+        </div>
+    </div>
+
+
+    <div class="d-flex align-items-start" style="margin-left: 5%;">
+        <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home"
+                type="button" role="tab" aria-controls="v-pills-home" aria-selected="true"
+                style="margin-bottom: 20%;">来源</button>
+            <button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile"
+                type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false"
+                style="margin-bottom: 20%;">时间</button>
+            <button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" data-bs-target="#v-pills-messages"
+                type="button" role="tab" aria-controls="v-pills-messages" aria-selected="false"
+                style="margin-bottom: 20%;">字数</button>
+        </div>
+        <div class="tab-content" id="v-pills-tabContent">
+            <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab"
+                tabindex="0">
+                <h3><span class="badge bg-secondary">来源</span></h3>
+
+                {% for source, count in classification.source.items %}
+                {% if forloop.counter0|divisibleby:8 and not forloop.first %}
+                {% endif %}
+                <a href="{% url 'show_classify_list' species='source' sort=source page=1 %}" class="btn btn-primary" style="width: 210px; height: 45px; display: inline-block;  text-align: center; margin-top: 2px;
+                        margin-bottom: 2px;">
+                    {{ source }}: {{ count }}</a>
+                {% endfor %}
+            </div>
+            <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab"
+                tabindex="0">
+                <h3><span class="badge bg-secondary">时间</span></h3>
+                {% for month, count in classification.dates.items %}
+                {% if forloop.counter0|divisibleby:8 and not forloop.first %}
+                {% endif %}
+                <a class="btn btn-primary" style="width: 210px; height: 45px; display: inline-block;  text-align: center; margin-top: 2px;
+                        margin-bottom: 2px;" href="{% url 'show_classify_list' species='dates' sort=month page=1 %}">
+                    {{ month }}月: {{ count }}</a>
+                {% endfor %}
+            </div>
+            <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab"
+                tabindex="0">
+                <h3><span class="badge bg-secondary">字数</span></h3>
+                {% for range, count in classification.content_length.items %}
+                {% if forloop.counter0|divisibleby:8 and not forloop.first %}
+                {% endif %}
+                <a href="{% url 'show_classify_list' species='content_length' sort=range page=1 %}" class="btn btn-primary" style="width: 210px; height: 45px; display: inline-block;  text-align: center; margin-top: 2px;
+                        margin-bottom: 2px;">
+                    {{ range }}: {{ count }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <br>
+    <br>
+    <br>
+    <br>
+</body>
+
+</html>

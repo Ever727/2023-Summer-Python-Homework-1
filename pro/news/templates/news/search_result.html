@@ -1,0 +1,330 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>昨日偷条</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-/mhDoLbDldZc3qpsJHpLogda//BVZbgYuw6kof4u2FrCedxOtgRZDTHgHUhOCVim"
+        crossorigin="anonymous"></script>
+    <!-- 引入 Bootstrap 核心 JavaScript 文件（必须放在 body 最底部） -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <nav class="navbar navbar-expand-lg "
+        style="background-color: rgba(111, 89, 156, 0.85); position: fixed; width: 100%; z-index: 99;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="http://127.0.0.1:8000/news/home" style="color: #d390c8;">昨日偷条</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">置顶</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="http://127.0.0.1:8000/news/list/1">列表</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://127.0.0.1:8000/news/classify">分类</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://127.0.0.1:8000/news/search">搜索</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link">结果数: {{ count }}</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" id="loading-time">页面加载时间：正在计算...</a>
+
+                        <script>
+                            // 当页面加载完成后执行的函数
+                            window.addEventListener('load', function () {
+                                // 获取页面加载完成的时间
+                                var loadTime = (window.performance.timing.domContentLoadedEventEnd - window.performance.timing.navigationStart) / 1000;
+
+                                // 将加载时间显示在页面上
+                                document.getElementById("loading-time").textContent = "页面加载时间：" + loadTime + "秒";
+                            });
+                        </script>
+                    </li>
+                </ul>
+
+                <!-- 引入 Font Awesome 图标库 -->
+                <link rel="stylesheet"
+                    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+                <style>
+                    .search-form {
+                        position: relative;
+                    }
+
+                    .search-options {
+                        position: absolute;
+                        top: calc(100% + 10px);
+                        /* 将搜索选项位置调整到搜索框下方 */
+                        left: 0;
+                        background-color: #ffffff;
+                        border: 1px solid #cccccc;
+                        padding: 10px;
+                        display: none;
+                        z-index: 10;
+                    }
+
+                    .search-option {
+                        margin-bottom: 5px;
+
+                    }
+
+                    .search-icon {
+                        position: absolute;
+                        top: 50%;
+                        right: 10px;
+                        transform: translateY(-50%);
+                        cursor: pointer;
+                        left: 0;
+                    }
+
+                    .search-form {
+                        position: relative;
+                        /* 将搜索表单设置为相对定位 */
+                        display: flex;
+                        justify-content: flex-end;
+                        /* 将容器内的元素右对齐 */
+                    }
+
+                    .search-button-container {
+                        margin-left: 5px;
+                        /* 设置搜索按钮左侧的间隔 */
+                    }
+                </style>
+
+
+
+                <script>
+                    document.querySelector('.search-icon').addEventListener('click', function () {
+                        var searchOptions = document.querySelector('.search-options');
+                        searchOptions.style.display = searchOptions.style.display === 'none' ? 'block' : 'none';
+                    });
+
+                    document.addEventListener('click', function (event) {
+                        var searchForm = document.querySelector('.search-form');
+                        if (!searchForm.contains(event.target)) {
+                            var searchOptions = document.querySelector('.search-options');
+                            searchOptions.style.display = 'none';
+                        }
+                    });
+                </script>
+
+
+            </div>
+        </div>
+    </nav>
+
+    <div style="border: 5px; padding: 40px;">
+        <div class="row row-cols-1 row-cols-md-4 g-5" id="component-container">
+            <!-- Generated components will be inserted here -->
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+
+            </ul>
+
+        </nav>
+
+        <style>
+            /* 调整输入栏样式 */
+            .input-group {
+                width: auto;
+                /* 设置输入栏宽度为自适应 */
+                margin-top: 0%;
+                /* 调整输入栏与分页导航栏之间的间距 */
+                margin-left: 5px;
+                position: relative;
+                /* 设置输入组件为相对定位 */
+                bottom: 16px;
+                /* 向下调整组件的位置 */
+
+            }
+        </style>
+
+        <script>
+            var currentPage = parseInt('{{ current_page }}');  // 将字符串转换为整数
+            var totalPages = parseInt('{{ total_pages }}');    // 将字符串转换为整数
+
+            // 计算需要展示的页码范围
+            var startPage, endPage;
+            if (totalPages <= 10) {
+                // 总页数少于等于10时，展示所有页码
+                startPage = 1;
+                endPage = totalPages;
+            } else {
+                // 总页数大于10时，根据当前页数计算展示的页码范围
+                if (currentPage <= 6) {
+                    startPage = 1;
+                    endPage = 10;
+                } else if (currentPage + 4 >= totalPages) {
+                    startPage = totalPages - 9;
+                    endPage = totalPages;
+                } else {
+                    startPage = currentPage - 5;
+                    endPage = currentPage + 4;
+                }
+            }
+
+            // 生成分页导航栏
+            var paginationHTML = '';
+            paginationHTML += '<nav aria-label="...">';
+            paginationHTML += '  <ul class="pagination justify-content-center">';
+            paginationHTML += '    <li class="page-item' + (currentPage === 1 ? ' disabled' : '') + '">';
+            paginationHTML += '      <a class="page-link" href="#" onclick="changePage(' + (currentPage - 1) + ')" tabindex="-1" aria-disabled="true"><<</a>';
+            paginationHTML += '  <li class="page-item"><a class="page-link" href="http://127.0.0.1:8000/news/search/result/1">首页</a></li>';
+            paginationHTML += '    </li>';
+            for (var i = startPage; i <= endPage; i++) {
+                if (i === currentPage) {
+                    paginationHTML += '    <li class="page-item active" aria-current="page">';
+                    paginationHTML += '      <span class="page-link">' + i + '</span>';
+                    paginationHTML += '    </li>';
+                } else {
+                    paginationHTML += '    <li class="page-item"><a class="page-link" href="#" onclick="changePage(' + i + ')">' + i + '</a></li>';
+                }
+            }
+            paginationHTML += '  <li class="page-item"><a class="page-link" href="http://127.0.0.1:8000/news/search/result' + '/' + totalPages + '">尾页</a></li>';
+            paginationHTML += '    <li class="page-item' + (currentPage === totalPages ? ' disabled' : '') + '">';
+            paginationHTML += '      <a class="page-link" href="#" onclick="changePage(' + (currentPage + 1) + ')">>></a>';
+            paginationHTML += '    </li>';
+            paginationHTML += '  </ul>';
+            paginationHTML += '</nav>';
+
+            // 增加输入栏和跳转按钮
+            paginationHTML += '<div class="input-group mt-3">';
+            paginationHTML += '  <input type="text" id="jumpPageInput" class="form-control" placeholder="跳转到页码">';
+            paginationHTML += '  <div class="input-group-append">';
+            paginationHTML += '    <button class="btn btn-primary" type="button" onclick="jumpToPage()">跳转</button>';
+            paginationHTML += '  </div>';
+            paginationHTML += '</div>';
+
+            // 将生成的分页导航栏插入到页面中
+            var ulElement = document.querySelector('.pagination');
+            ulElement.innerHTML = paginationHTML;
+
+            // 页码按钮点击事件处理程序
+            // 定义一个用于发送 POST 请求的函数，并在请求成功后进行页面跳转
+            function sendPostRequestAndRedirect(url, data) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', url, true);
+                xhr.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
+                var csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+                xhr.setRequestHeader('X-CSRFToken', csrfToken);
+                xhr.send(JSON.stringify(data));
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+
+                        window.location.href = url;
+
+                    }
+                };
+
+            }
+
+            // 跳转按钮点击事件处理程序
+            function jumpToPage() {
+                var jumpPageInput = document.getElementById('jumpPageInput');
+                var jumpPage = parseInt(jumpPageInput.value);
+                if (jumpPage >= 1 && jumpPage <= totalPages) {
+                    currentPage = jumpPage;
+
+                    // 构造 POST 请求数据
+                    var _searchRequest = {
+                        query: "{{ query }}",
+                        months: "{{ months }}",
+                        sortOption: "{{ sortOption }}",
+                    };
+                    var postData = { page: currentPage, searchRequest: JSON.stringify(_searchRequest) };
+
+                    //window.location.href = 'http://127.0.0.1:8000/news/search/result' + '/' + currentPage;
+                    // 发送 POST 请求，并在请求成功后跳转到结果页面
+                    sendPostRequestAndRedirect('http://127.0.0.1:8000/news/search/result' + '/' + currentPage, postData);
+                }
+            }
+
+            function changePage(page) {
+                if (page >= 1 && page <= totalPages) {
+                    currentPage = page;
+                    var _searchRequest = {
+                        query: "{{ query }}",
+                        months: "{{ months }}",
+                        sortOption: "{{ sortOption }}",
+                    };
+                    var postData = { page: currentPage, searchRequest: JSON.stringify(_searchRequest) };
+                    //window.location.href = 'http://127.0.0.1:8000/news/search/result' + '/' + currentPage; // 将 'your_page_url' 替换为你实际的页面 URL，并传递当前页码作为参数
+                    sendPostRequestAndRedirect('http://127.0.0.1:8000/news/search/result' + '/' + currentPage, postData);
+                }
+            }
+
+
+        // 跳转按钮点击事件处理程序
+        </script>
+    </form>
+
+
+
+    <div class="row row-cols-1 row-cols-md-4 g-5" style="margin-right: 10px; margin-left: 10px;">
+        {% for item in news %}
+        <div class="col">
+            <div class="card h-100">
+                <img src="{% static item.local_img %}" class="card-img-top"
+                    onerror="this.onerror=null;this.src='/static/0b14d7d0299054b304787403cb8d568472257a63.jpg';"
+                    style="width: 100%; height: 200px; object-fit: cover;">
+
+                <div class="card-body">
+                    <h3 class="card-title">{{ item.title }}</h3>
+                    <h6>关键词：{{ item.keywords }}</h6>
+                    <small>{{ item.source }}</small>
+                    <small>{{ item.date|date:"Y-m-d" }}</small>
+                    <p class="card-text">{{ item.content|slice:":100" }}...</p>
+
+                </div>
+                <a href="http://127.0.0.1:8000/news/mainbody/{{ item.id }}" class="btn btn-primary"
+                    style="position: relative; bottom: 10px; right: -10px; width: 25%;">详情</a>
+                <div class="card-footer">
+                    <small class="text-muted" style="margin-right: 10px;">{{ item.views }}阅读</small>
+                    <small class="text-muted" style="margin-right: 10px;">{{ item.comments }}评论</small>
+                    <small class="text-muted" style="margin-right: 10px;">{{ item.likes }}点赞</small>
+                    <small class="text-muted" style="margin-right: 10px;">{{ item.favorites }}收藏</small>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+    <div style="border: 5px; padding: 40px;">
+        <div class="row row-cols-1 row-cols-md-4 g-5" id="component-container">
+            <!-- Generated components will be inserted here -->
+        </div>
+    </div>
+
+
+    <br>
+    <br>
+    <br>
+    <br>
+</body>
+
+</html>

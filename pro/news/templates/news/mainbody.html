@@ -1,0 +1,214 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ news.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-/mhDoLbDldZc3qpsJHpLogda//BVZbgYuw6kof4u2FrCedxOtgRZDTHgHUhOCVim"
+        crossorigin="anonymous"></script>
+    <!-- 引入 Bootstrap 核心 JavaScript 文件（必须放在 body 最底部） -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <nav class="navbar navbar-expand-lg "
+        style="background-color: rgba(111, 89, 156, 0.85); position: fixed; width: 100%; z-index: 99;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="http://127.0.0.1:8000/news/home" style="color: #d390c8;">昨日偷条</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">置顶</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="http://127.0.0.1:8000/news/list/1">列表</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://127.0.0.1:8000/news/classify">分类</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://127.0.0.1:8000/news/search">搜索</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <br>
+    <br>
+    <br>
+
+    <div class="hstack gap-3">
+        <div class="vstack gap-3">
+            <h1 style="margin-left: 5%; height: 10%; width: 100%; margin-top: 1%;">
+                <news class="title" style="font-weight: bold;">{{ news.title }}</news>
+                <div class="hstack gap-3" style="font-size: medium; color: #888; margin-top: 20px;">
+                    <p>{{ news.source }}</p>
+                    <p>{{ fmt_date }}</p>
+                    <div style="display: flex;">
+                        <p style="margin-right: auto;">{{ news.views }} 阅读</p>
+                        <p style="margin-left: 10px;">{{ news.likes }} 点赞</p>
+                        <p style="margin-left: 10px;">{{ news.favorites }} 收藏</p>
+                        <p style="margin-left: 10px;">{{ news.comments }} 评论</p>
+                    </div>
+                </div>
+            </h1>
+
+
+            {% if news.imgurl %}
+            <div id="carouselExampleIndicators" class="carousel slide" style="width: 80%; margin-left: 5%">
+                <div class="carousel-indicators">
+                    {% for imgurl in imgurls %}
+                    <button type="button" data-bs-target="#carouselExampleIndicators"
+                        data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"
+                        aria-current="true" {% endif %} aria-label="Slide {{ forloop.counter }}"></button>
+                    {% endfor %}
+                </div>
+
+
+
+                <div class="carousel-inner" style="margin-left: auto; margin-right: auto; width: 900px; height: 420px;">
+                    {% for imgurl in imgurls %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{% static imgurl %}" class="d-block" alt="..."
+                            style="object-fit: cover; width: 100%; height: 100%;">
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+                    data-bs-slide="prev"
+                    style="background-color: rgb(104, 69, 185); border-color: red; color: white; width: 100px;">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+                    data-bs-slide="next"
+                    style="background-color: rgb(104, 69, 185); border-color: red; color: white; width: 100px;">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+            {% endif %}
+
+
+
+            <br style="margin-top: 3%;">
+            <div style="margin-left: 5%; margin-right: 15%; white-space: pre-wrap;">{{ news.content }}</div>
+            <div style="margin-left: 5%; margin-right: 10%; white-space: pre-wrap; font-weight: bold;">
+                责任编辑：{{news.editor }}</div>
+
+            <hr class="d-flex"
+                style="margin-left: 5%; height: 1px; flex-grow: 1; margin-top: 100px; width: 85%; background-color: rgb(10, 10, 10);">
+
+            <br style="margin-top: 1%;">
+
+            {% if comments %}
+            <ol class="list-group list-group-numbered" style="margin-left: 5%; margin-right: 15%;">
+
+                {% for comment in comments %}
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">{{ comment.user }}</div>
+                        {{ comment.content }}
+                    </div>
+                    <span class="badge bg-primary rounded-pill" style="margin-left: -5px;">{{ comment.date }}</span>
+                    <div style="margin-left: 10px;"> </div>
+                    <form method="POST" action="{% url 'delete_comment' id=news.id comment_id=comment.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger">删除</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ol>
+            {% else %}
+            <div class="alert alert-info" role="alert" style="margin-left: 5%; margin-right: 15%;">
+                快来评论吧！
+            </div>
+
+            {% endif %}
+
+            <form method="POST" action="{% url 'comment' id=news.id %}">
+                {% csrf_token %}
+                <div class="input-group flex-nowrap">
+                    <input type="text" name="user" class="form-control" aria-label="Username"
+                        aria-describedby="addon-wrapping" style="margin-left: 5%; margin-right: 15%;" placeholder="用户名"
+                        required>
+                </div>
+                <div class="form-floating" style="margin-left: 5%; margin-right: 15%;">
+                    <textarea class="form-control" name="content" placeholder="Leave a comment here"
+                        id="floatingTextarea2" style="height: 100px" required></textarea>
+                    <label for="floatingTextarea2">在此评论</label>
+                </div>
+                <button type="submit" class="btn btn-success" style="margin-left: 79.8%; ">提交评论</button>
+            </form>
+
+
+
+        </div>
+        <div class="d-flex" style="height: 80%; position: fixed; right: 20%; top: 10%;">
+            <div class="vr"></div>
+        </div>
+
+        <div class="accordion ms-auto" id="accordionPanelsStayOpenExample"
+            style="margin-right: 2%; width: 16%; top: 0; position: sticky;">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
+                        aria-controls="panelsStayOpen-collapseOne" style="background-color: rgb(192, 175, 228);">
+                        信息
+                    </button>
+                </h2>
+                <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show"
+                    aria-labelledby="panelsStayOpen-headingOne">
+                    <div class="accordion-body">
+                        <strong><a href="{{ news.url }}">原文链接</a></strong>
+                        <br style="margin-bottom: 5px;">
+                        <a>分类：<a href="http://127.0.0.1:8000/news/classify/source/{{ news.source }}/1">{{ news.source }}</a> <a href="http://127.0.0.1:8000/news/classify/dates/{{ news.date.month }}/1">{{ news.date.month }}月</a> <a href="http://127.0.0.1:8000/news/classify/content_length/{{ long }}/1">{{ long }}</a></a>
+                        <br style="margin-bottom: 5px;">
+                        <a>关键词：{{ news.keywords }}</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+    <div style="border: 5px; padding: 40px;">
+        <div class="row row-cols-1 row-cols-md-4 g-5" id="component-container">
+            <!-- Generated components will be inserted here -->
+        </div>
+    </div>
+
+
+
+
+
+
+
+</body>
+
+</html>
